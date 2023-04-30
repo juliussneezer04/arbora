@@ -11,15 +11,14 @@ function FloorScript() {
   const { getComponent, plantSeed } = useGameObject();
   const floorSeedState = useRef(false);
 
-  useRightPointerClick((event) => {
-    if (event.button === 2 && !floorSeedState.current && plantSeed()) {
-      console.log("Planting seeds");
-      floorSeedState.current = true;
-      getComponent<SpriteRef>("Sprite").setState("plant-2");
-    }
+  // useRightPointerClick((event) => {
+  //   if (event.button === 2 && !floorSeedState.current && plantSeed()) {
+  //     floorSeedState.current = true;
+  //     getComponent<SpriteRef>("Sprite").setState("plant-2");
+  //   }
 
-    return waitForMs(400);
-  });
+  //   return waitForMs(400);
+  // });
 
   return null;
 }

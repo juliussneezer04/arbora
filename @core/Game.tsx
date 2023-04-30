@@ -138,7 +138,7 @@ export default function Game({
     };
 
     return (
-        <div className='relative select-none w-screen h-screen'>
+        <div className='relative select-none w-screen h-screen bg-green-700'>
             <Canvas
                 camera={{
                     position: [0, 0, 32],
@@ -151,7 +151,7 @@ export default function Game({
                 // gl2
                 gl={{ antialias: false }}
                 onContextMenu={e => e.preventDefault()}
-                style={{ width: '100%', height: '100%' }}
+                style={{ width: '100%', height: '100%', backgroundImage: "url(/background2.png)" }}
             >
                 <GameContext.Provider value={contextValue}>
                     {children}
