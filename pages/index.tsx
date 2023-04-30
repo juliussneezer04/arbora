@@ -3,7 +3,6 @@ import AssetLoader from "../@core/AssetLoader";
 import Game from "../@core/Game";
 import Scene from "../@core/Scene";
 import SceneManager from "../@core/SceneManager";
-import useWindowSize from "../@core/useWindowSize";
 import OfficeScene from "../scenes/OfficeScene";
 import OtherScene from "../scenes/OtherScene";
 import soundData from "../components/soundData";
@@ -20,7 +19,7 @@ export default function App() {
   return (
     <>
       <div className="flex justify-center items-center w-screen h-screen">
-        <Game cameraZoom={50}>
+        <Game cameraZoom={60}>
           <AssetLoader urls={urls} placeholder="Loading assets ...">
             <SceneManager defaultScene="office">
               <Scene id="office">
