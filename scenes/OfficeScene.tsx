@@ -14,14 +14,14 @@ import Workstation from '../entities/Workstation';
 import spriteData from '../components/spriteData';
 
 const mapData = mapDataString(`
-# # # # # # # # # # # # # # # # #
-# · W T # T · · W T · W · · · T #
-# · · · · · · · · · · · · · · o ·
-# o · · # · · · # # # # · · # # #
-# # # # # · · · # W o W · · T W #
-# C C C # · · · T · · · · · · · #
-# o · · · · · · · · · · · · · o #
-# # # # # # # # # # # # # # # # #
+# # # # # # # # # # #
+# · · · · · · · · · #
+# · · · · · · · · · ·
+# · · · W · · · · · #
+# · · · W · · · · · #
+# · · · · · · · · · #
+# · · · · · · · · · #
+# # # # # # # # # # #
 `);
 
 const resolveMapTile: TileMapResolver = (type, x, y) => {

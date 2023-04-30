@@ -12,17 +12,17 @@ function WorkstationScript() {
     const { getComponent } = useGameObject();
     const workState = useRef(false);
 
-    useGameObjectEvent<InteractionEvent>('interaction', () => {
-        workState.current = !workState.current;
+    // useGameObjectEvent<InteractionEvent>('interaction', () => {
+    //     workState.current = !workState.current;
 
-        if (workState.current) {
-            getComponent<SpriteRef>('Sprite').setState('workstation-2');
-        } else {
-            getComponent<SpriteRef>('Sprite').setState('workstation-1');
-        }
+    //     if (workState.current) {
+    //         getComponent<SpriteRef>('Sprite').setState('workstation-2');
+    //     } else {
+    //         getComponent<SpriteRef>('Sprite').setState('workstation-1');
+    //     }
 
-        return waitForMs(400);
-    });
+    //     return waitForMs(400);
+    // });
 
     return null;
 }
@@ -30,7 +30,7 @@ function WorkstationScript() {
 export default function Workstation(props: GameObjectProps) {
     return (
         <GameObject {...props}>
-            <Sprite {...spriteData.objects} state="workstation-1" />
+            <Sprite {...spriteData.objects} state="plant-3" />
             <Collider />
             <Interactable />
             <WorkstationScript />
