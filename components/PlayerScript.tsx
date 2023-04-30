@@ -36,12 +36,6 @@ export default function PlayerScript(props: {
     };
     const nextPosition = tileUtils(transform).add(direction);
 
-    // if (counter % 5 === 0) {
-    //   props.setOpenModal(true);
-    //   props.setMessage("Hey thanks for playing! Please watch this video or buy more credits to continue");
-    //   setCounter(0);
-    // }
-
     // is same position?
     if (tileUtils(nextPosition).equals(transform)) return;
 
@@ -97,8 +91,6 @@ export default function PlayerScript(props: {
             nextPosition
           )));
 
-      // console.log("counter", counter);
-      // setCounter((current) => current + 1);
 
       if (anyAction) {
         // proceed with next step in path
