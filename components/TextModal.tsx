@@ -1,6 +1,14 @@
 import React, { useMemo, useState } from "react";
 import { animated, useTransition } from "react-spring";
-const DialogBox = ({ messages, parentSetOpen }: { messages: string[]; parentSetOpen: (val: boolean) => void; }) => {
+const DialogBox = ({
+  messages,
+  parentSetMessages,
+  parentSetOpen,
+}: {
+  messages: string[];
+  parentSetMessages: (val: string[]) => void;
+  parentSetOpen: (val: boolean) => void;
+}) => {
   //highlight-start
   const [currentMessage, setCurrentMessage] = useState(0);
   const handleClick = () => {
@@ -8,6 +16,7 @@ const DialogBox = ({ messages, parentSetOpen }: { messages: string[]; parentSetO
       setCurrentMessage(currentMessage + 1);
     } else {
       setCurrentMessage(0);
+      parentSetMessages([]);
       parentSetOpen(false);
     }
   };

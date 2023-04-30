@@ -17,9 +17,9 @@ const urls = [
 
 export default function App() {
   const [openMessageModal, setOpenMessageModal] = React.useState(false);
-  const [messages, _setMessages] = React.useState<string[]>([]);
+  const [messages, setMessages] = React.useState<string[]>([]);
   const setMessage = (message: string) => {
-    _setMessages([...messages, message]);
+    setMessages([...messages, message]);
   };
 
   return (
@@ -27,7 +27,7 @@ export default function App() {
       <div className="flex justify-center items-center w-screen h-screen">
         {openMessageModal && (
           <div className="absolute z-50 top-0 left-0 w-screen h-screen bg-black bg-opacity-50">
-            <DialogBox messages={messages} parentSetOpen={setOpenMessageModal} />
+            <DialogBox messages={messages} parentSetMessages={setMessages} parentSetOpen={setOpenMessageModal} />
           </div>
         )}
         <Game cameraZoom={60}>
