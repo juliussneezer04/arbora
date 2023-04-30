@@ -26,7 +26,7 @@ const DialogBox = ({
       <div className="text-lg font-semibold mb-4">Continue Caring 🌳</div>
       <Message message={messages[currentMessage]} key={currentMessage} />
       <div onClick={handleClick} className="dialogFooter">
-        {currentMessage < 1 ? "Next" : "Close"}
+        {currentMessage < messages.length ? "Next" : "Close"}
       </div>
     </div>
   );

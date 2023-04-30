@@ -9,9 +9,13 @@ import CharacterScript from '../components/CharacterScript';
 import PlayerScript from '../components/PlayerScript';
 import spriteData from '../components/spriteData';
 
-export default function Player(props: GameObjectProps) {
+export default function Player(props: GameObjectProps & {
+  setOpenModal: (val: boolean) => void; 
+  setMessage: (msg: string) => void;
+}) {
+  const { setOpenModal, setMessage, ...gameProps } = props;
     return (
-        <GameObject name="player" displayName="Player" layer="character" {...props}>
+        <GameObject name="player" displayName="Player" layer="character" {...gameProps}>
             <Moveable />
             <Interactable />
             <Collider />
@@ -19,7 +23,7 @@ export default function Player(props: GameObjectProps) {
                 <Sprite {...spriteData.player} />
             </CharacterScript>
             <CameraFollowScript />
-            <PlayerScript />
+            <PlayerScript setMessage={setMessage} setOpenModal={setOpenModal} />
         </GameObject>
     );
 }

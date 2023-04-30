@@ -29,7 +29,7 @@ const resolveMapTile: TileMapResolver = (type, x, y) => {
   const key = `${x}-${y}`;
   const position = { x, y };
 
-  const floor = <Floor {...position} />;
+  const floor = <Floor key={key} {...position} />;
 
   switch (type) {
     case "·":
@@ -82,7 +82,7 @@ const resolveMapTile: TileMapResolver = (type, x, y) => {
 };
 
 interface OfficeSceneProps {
-  setOpenModal: Dispatch<SetStateAction<boolean>>; 
+  setOpenModal: (val: boolean) => void; 
   setMessage: (msg: string) => void;
 }
 
@@ -103,7 +103,7 @@ export default function OfficeScene(props: OfficeSceneProps) {
           target="other/start"
         />
       </GameObject>
-      <Player x={6} y={3} />
+      <Player x={6} y={3} {...props} />
     </>
   );
 }

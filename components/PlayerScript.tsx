@@ -11,13 +11,16 @@ import usePointer from "../@core/usePointer";
 import usePointerClick from "../@core/usePointerClick";
 import tileUtils from "../@core/utils/tileUtils";
 import PlayerPathOverlay from "./PlayerPathOverlay";
-import { SpriteRef } from "@/@core/Sprite";
 
-export default function PlayerScript() {
+export default function PlayerScript(props: {
+  setOpenModal: (val: boolean) => void; 
+  setMessage: (msg: string) => void;
+}) {
   const { getComponent, transform } = useGameObject();
   const testCollision = useCollisionTest();
   const findPath = usePathfinding();
   const [path, setPath] = useState<Position[]>([]);
+  const [counter, setCounter] = useState(0);
   const [pathOverlayEnabled, setPathOverlayEnabled] = useState(true);
 
   // key controls
@@ -33,11 +36,18 @@ export default function PlayerScript() {
     };
     const nextPosition = tileUtils(transform).add(direction);
 
+    if (counter % 5 === 0) {
+      props.setOpenModal(true);
+      props.setMessage("Hey thanks for playing! Please watch this video or buy more credits to continue");
+      setCounter(0);
+    }
+
     // is same position?
     if (tileUtils(nextPosition).equals(transform)) return;
 
     // is already moving?
     if (!getComponent<MoveableRef>("Moveable").canMove()) return;
+
 
     // will cut corner?
     const horizontal = { ...transform, x: nextPosition.x };
@@ -86,6 +96,9 @@ export default function PlayerScript() {
           (await getComponent<InteractableRef>("Interactable")?.interact(
             nextPosition
           )));
+
+      console.log("counter", counter);
+      setCounter((current) => current + 1);
 
       if (anyAction) {
         // proceed with next step in path
