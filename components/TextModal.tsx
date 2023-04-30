@@ -1,5 +1,7 @@
+import dynamic from "next/dynamic";
 import React, { useMemo, useState } from "react";
 import { animated, useTransition } from "react-spring";
+const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 const DialogBox = ({
   messages,
   parentSetMessages,
@@ -25,7 +27,7 @@ const DialogBox = ({
     <div className="bg-green-600 border-solid p-4">
       <div className="text-lg font-semibold mb-4">Continue Caring 🌳</div>
       <Message message={messages[currentMessage]} key={currentMessage} />
-      <div onClick={handleClick} className="dialogFooter">
+      <div onClick={handleClick} className="r">
         {currentMessage < messages.length ? "Next" : "Close"}
       </div>
     </div>
@@ -44,10 +46,15 @@ function Message({ message }: { message?: string }) {
     enter: { display: "" },
   });
   return (
-    <div className="bg-green-600 border-solid p-4">
+    <div className="bg-green-600 border-solid p-4 flex flex-col space-y-6">
       {transitions((style, item) => {
         return <animated.div style={style}>{item}</animated.div>;
       })}
+      <ReactPlayer
+        controls
+        width="100%"
+        url={"https://www.youtube.com/watch?v=RiswriKP9c8"}
+      />
     </div>
   );
 }
