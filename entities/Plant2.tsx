@@ -7,6 +7,8 @@ import Interactable, { InteractionEvent } from "@/@core/Interactable";
 import useGameObject from "@/@core/useGameObject";
 import useGameObjectEvent from "@/@core/useGameObjectEvent";
 import waitForMs from "@/@core/utils/waitForMs";
+import { useSound } from "@/@core/Sound";
+import soundData from "@/components/soundData";
 
 function PlantScript(props: {
   setMessage: (message: string) => void;
@@ -14,9 +16,11 @@ function PlantScript(props: {
 }) {
   const { getComponent } = useGameObject();
   const workState = useRef(false);
+  const playSfx = useSound(soundData.drinking);
 
   useGameObjectEvent<InteractionEvent>("interaction", () => {
     workState.current = !workState.current;
+    playSfx();
 
     if (workState.current) {
       waitForMs(2000).then((val) =>
