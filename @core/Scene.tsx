@@ -26,7 +26,7 @@ interface SceneContextValue {
     setLevel: (level: number) => void;
 }
 
-const SceneContext = React.createContext<SceneContextValue>(null);
+const SceneContext = React.createContext<SceneContextValue | null>(null);
 
 export function useScene() {
     return useContext(SceneContext) as SceneContextValue;
@@ -39,7 +39,7 @@ export interface LevelContextValue {
     enterNextLevel: () => void;
 }
 
-export const LevelContext = React.createContext<LevelContextValue>(null);
+export const LevelContext = React.createContext<LevelContextValue | null>(null);
 
 export function useLevel() {
     return useContext(LevelContext) as LevelContextValue;
@@ -79,9 +79,9 @@ export default function Scene({ id, children }: Props) {
     const contextValue = useMemo<SceneContextValue>(
         () => ({
             instantiate(newElement, portalNode) {
-                const key = newElement.key == null ? Math.random() : newElement.key;
+                const key = newElement.key === null ? Math.random() : newElement.key;
                 const instance = portalNode
-                    ? createPortal(newElement, portalNode, null, key)
+                    ? createPortal(newElement, portalNode)
                     : React.cloneElement(newElement, { key });
                 setInstances(current => [...current, instance as React.ReactElement]);
                 return () => {

@@ -6,9 +6,9 @@ import spriteData from '../components/spriteData';
 
 export default function Plant(props: GameObjectProps) {
     return (
-        <GameObject layer="obstacle" {...props}>
+        <GameObject {...props}>
             <Collider />
-            <Sprite {...spriteData.objects} state="plant" offset={{ x: 0, y: 0.25 }} />
+            <Sprite {...spriteData.objects} state="plant-1" offset={{ x: 0, y: 0.25 }} />
         </GameObject>
     );
 }

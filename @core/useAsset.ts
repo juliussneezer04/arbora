@@ -9,6 +9,7 @@ export default function useAsset(urlOrObj: AssetUrlParam) {
         let url = typeof urlOrObj === 'string' ? urlOrObj : urlOrObj.src;
         // eslint-disable-next-line prefer-destructuring
         if (Array.isArray(url)) url = url[0];
+        if (!assets?.current) throw new Error('Asset not found');
         return assets.current[url];
     } catch {
         return null;

@@ -1,193 +1,209 @@
 /* eslint-disable react/no-unknown-property */
 import React, {
-    Dispatch,
-    RefObject,
-    SetStateAction,
-    useCallback,
-    useLayoutEffect,
-    useMemo,
-    useRef,
-    useState,
-} from 'react';
-import * as THREE from 'three';
-import { ComponentRegistryUtils } from './useComponentRegistry';
-import useForceUpdate from './useForceUpdate';
-import useGame from './useGame';
-import useGameObject from './useGameObject';
-import useGameObjectStore from './useGameObjectStore';
-import useStateFromProp from './useStateFromProp';
-import createPubSub, { PubSub } from './utils/createPubSub';
+  Dispatch,
+  RefObject,
+  SetStateAction,
+  useCallback,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import * as THREE from "three";
+import { ComponentRegistryUtils } from "./useComponentRegistry";
+import useForceUpdate from "./useForceUpdate";
+import useGame from "./useGame";
+import useGameObject from "./useGameObject";
+import useGameObjectStore from "./useGameObjectStore";
+import useStateFromProp from "./useStateFromProp";
+import createPubSub, { PubSub } from "./utils/createPubSub";
 
 export interface Position {
-    x: number;
-    y: number;
+  x: number;
+  y: number;
 }
 
 export interface GameObjectContextValue extends ComponentRegistryUtils, PubSub {
-    id: symbol;
-    name: Readonly<string>;
-    transform: {
-        x: Readonly<number>;
-        y: Readonly<number>;
-        setX: Dispatch<SetStateAction<number>>;
-        setY: Dispatch<SetStateAction<number>>;
-    };
-    forceUpdate: VoidFunction;
-    nodeRef: RefObject<THREE.Group>;
-    getRef: () => GameObjectRef;
+  id: symbol;
+  name: Readonly<string>;
+  transform: {
+    x: Readonly<number>;
+    y: Readonly<number>;
+    setX: Dispatch<SetStateAction<number>>;
+    setY: Dispatch<SetStateAction<number>>;
+  };
+  plantSeed: () => boolean;
+  collectSeed: () => void;
+  forceUpdate: VoidFunction;
+  nodeRef: RefObject<THREE.Group>;
+  getRef: () => GameObjectRef;
 }
 
-export const GameObjectContext = React.createContext<GameObjectContextValue>(null);
+export const GameObjectContext =
+  React.createContext<GameObjectContextValue | null>(null);
 
 export type GameObjectLayer =
-    | 'ground'
-    | 'ground-decal'
-    | 'wall'
-    | 'visible-wall'
-    | 'water'
-    | 'obstacle'
-    | 'character'
-    | 'item'
-    | 'fx';
+  | "ground"
+  | "ground-decal"
+  | "wall"
+  | "visible-wall"
+  | "water"
+  | "obstacle"
+  | "character"
+  | "item"
+  | "fx";
 
 export interface GameObjectProps extends Partial<Position> {
-    name?: string;
-    displayName?: string;
-    layer?: GameObjectLayer;
-    disabled?: boolean;
-    persisted?: boolean;
-    children?: React.ReactNode;
+  name?: string;
+  displayName?: string;
+  layer?: GameObjectLayer;
+  disabled?: boolean;
+  persisted?: boolean;
+  children?: React.ReactNode;
 }
 
-export type GameObjectRef = Pick<GameObjectProps, 'name' | 'displayName'> & {
-    id: symbol;
-    layer: GameObjectLayer;
-    transform: GameObjectContextValue['transform'];
-    getComponent: ComponentRegistryUtils['getComponent'];
-    disabled: Readonly<boolean>;
-    setDisabled: Dispatch<SetStateAction<boolean>>;
-    subscribe: PubSub['subscribe'];
+export type GameObjectRef = Pick<GameObjectProps, "name" | "displayName"> & {
+  id: symbol;
+  layer: GameObjectLayer;
+  transform: GameObjectContextValue["transform"];
+  getComponent: ComponentRegistryUtils["getComponent"];
+  disabled: Readonly<boolean>;
+  setDisabled: Dispatch<SetStateAction<boolean>>;
+  subscribe: PubSub["subscribe"];
 };
 
 function Persistence() {
-    const { getRef } = useGameObject();
+  const { getRef } = useGameObject();
 
-    useGameObjectStore(
-        '_gameObject',
-        () => {
-            const self = getRef();
-            return {
-                x: self.transform.x,
-                y: self.transform.y,
-                disabled: self.disabled,
-            };
-        },
-        stored => {
-            const self = getRef();
-            // TODO: make peristence of position optional
-            //   (the position of one-time enemies like bosses should not be persisted)
-            // self.transform.setX(stored.x);
-            // self.transform.setY(stored.y);
-            self.setDisabled(stored.disabled);
-        }
-    );
+  useGameObjectStore(
+    "_gameObject",
+    () => {
+      const self = getRef();
+      return {
+        x: self.transform.x,
+        y: self.transform.y,
+        disabled: self.disabled,
+      };
+    },
+    (stored) => {
+      const self = getRef();
+      // TODO: make peristence of position optional
+      //   (the position of one-time enemies like bosses should not be persisted)
+      // self.transform.setX(stored.x);
+      // self.transform.setY(stored.y);
+      self.setDisabled(stored.disabled);
+    }
+  );
 
-    return null;
+  return null;
 }
 
 export default function GameObject({
-    name,
-    displayName,
-    layer,
-    children,
-    disabled: initialDisabled = false,
-    persisted = false,
-    ...props
+  name,
+  displayName,
+  layer,
+  children,
+  disabled: initialDisabled = false,
+  persisted = false,
+  ...props
 }: GameObjectProps) {
-    const identifier = useRef(Symbol('GameObject'));
-    const node = useRef(null);
-    const [registry] = useState(() => new Map<string, any>());
-    const [pubSub] = useState(() => createPubSub());
-    const [x, setX] = useStateFromProp(props.x || 0);
-    const [y, setY] = useStateFromProp(props.y || 0);
-    const [disabled, setDisabled] = useState(initialDisabled);
-    const { registerGameObject, unregisterGameObject } = useGame();
-    const forceUpdate = useForceUpdate();
+  const identifier = useRef(Symbol("GameObject"));
+  const node = useRef(null);
+  const [registry] = useState(() => new Map<string, any>());
+  const [pubSub] = useState(() => createPubSub());
+  const [x, setX] = useStateFromProp(props.x || 0);
+  const [y, setY] = useStateFromProp(props.y || 0);
+  const [disabled, setDisabled] = useState(initialDisabled);
+  const [seeds, setSeeds] = useState(2);
+  const { registerGameObject, unregisterGameObject } = useGame();
+  const forceUpdate = useForceUpdate();
 
-    const registryUtils = useMemo<ComponentRegistryUtils>(
-        () => ({
-            registerComponent(id, api) {
-                registry.set(id, api);
-            },
-            unregisterComponent(id) {
-                registry.delete(id);
-            },
-            getComponent(id) {
-                return registry.get(id);
-            },
-        }),
-        [registry]
-    );
+  const registryUtils = useMemo<ComponentRegistryUtils>(
+    () => ({
+      registerComponent(id, api) {
+        registry.set(id, api);
+      },
+      unregisterComponent(id) {
+        registry.delete(id);
+      },
+      getComponent(id) {
+        return registry.get(id);
+      },
+    }),
+    [registry]
+  );
 
-    const transform = useMemo<GameObjectContextValue['transform']>(
-        () => ({
-            x,
-            y,
-            setX,
-            setY,
-        }),
-        [x, y, setX, setY]
-    );
+  const transform = useMemo<GameObjectContextValue["transform"]>(
+    () => ({
+      x,
+      y,
+      setX,
+      setY,
+    }),
+    [x, y, setX, setY]
+  );
 
-    const gameObjectRef = useMemo<GameObjectRef>(
-        () => ({
-            id: identifier.current,
-            name,
-            displayName,
-            layer,
-            transform,
-            getComponent: registryUtils.getComponent,
-            disabled,
-            setDisabled,
-            subscribe: pubSub.subscribe,
-        }),
-        [name, displayName, layer, transform, registryUtils, disabled, pubSub]
-    );
+  const plantSeed = useMemo<GameObjectContextValue["plantSeed"]>(
+    () => () => seeds > 0 && setSeeds(seeds - 1) || true,
+    [seeds]
+  );
 
-    const getRef = useCallback(() => gameObjectRef, [gameObjectRef]);
+  const collectSeed = useMemo<GameObjectContextValue["collectSeed"]>(
+    () => () => setSeeds(seeds + 1),
+    [seeds]
+  );
 
-    useLayoutEffect(() => {
-        const id = identifier.current;
-        registerGameObject(id, gameObjectRef);
-        return () => unregisterGameObject(id, gameObjectRef);
-    }, [registerGameObject, unregisterGameObject, gameObjectRef]);
+  const gameObjectRef = useMemo<GameObjectRef>(
+    () => ({
+      id: identifier.current,
+      name,
+      displayName,
+      layer: layer || "ground",
+      transform,
+      getComponent: registryUtils.getComponent,
+      disabled,
+      setDisabled,
+      subscribe: pubSub.subscribe,
+    }),
+    [name, displayName, layer, transform, registryUtils, disabled, pubSub]
+  );
 
-    const contextValue: GameObjectContextValue = {
-        id: identifier.current,
-        name,
-        transform,
-        forceUpdate,
-        nodeRef: node,
-        getRef,
-        ...pubSub,
-        ...registryUtils,
-    };
+  const getRef = useCallback(() => gameObjectRef, [gameObjectRef]);
 
-    // TODO: add constants for z indices
-    let offsetZ = 0;
-    if (layer === 'ground') offsetZ = -1;
-    if (layer === 'ground-decal') offsetZ = 0.1;
-    if (layer === 'obstacle') offsetZ = 0.2;
-    if (layer === 'item') offsetZ = 0.3;
-    if (layer === 'character') offsetZ = 0.5;
-    if (layer === 'fx') offsetZ = 4;
+  useLayoutEffect(() => {
+    const id = identifier.current;
+    registerGameObject(id, gameObjectRef);
+    return () => unregisterGameObject(id, gameObjectRef);
+  }, [registerGameObject, unregisterGameObject, gameObjectRef]);
 
-    return (
-        <GameObjectContext.Provider value={contextValue}>
-            {persisted && <Persistence />}
-            <group ref={node} position={[x, y, (-y + offsetZ) / 100]}>
-                {!disabled && children}
-            </group>
-        </GameObjectContext.Provider>
-    );
+  const contextValue: GameObjectContextValue = {
+    id: identifier.current,
+    name: name || "",
+    transform,
+    forceUpdate,
+    nodeRef: node,
+    getRef,
+    plantSeed,
+    collectSeed,
+    ...pubSub,
+    ...registryUtils,
+  };
+
+  // TODO: add constants for z indices
+  let offsetZ = 0;
+  if (layer === "ground") offsetZ = -1;
+  if (layer === "ground-decal") offsetZ = 0.1;
+  if (layer === "obstacle") offsetZ = 0.2;
+  if (layer === "item") offsetZ = 0.3;
+  if (layer === "character") offsetZ = 0.5;
+  if (layer === "fx") offsetZ = 4;
+
+  return (
+    <GameObjectContext.Provider value={contextValue}>
+      {persisted && <Persistence />}
+      <group ref={node} position={[x, y, (-y + offsetZ) / 100]}>
+        {!disabled && children}
+      </group>
+    </GameObjectContext.Provider>
+  );
 }

@@ -15,7 +15,7 @@ export interface SceneManagerContextValue {
     getSceneState: (key: string) => any;
 }
 
-export const SceneManagerContext = React.createContext<SceneManagerContextValue>(null);
+export const SceneManagerContext = React.createContext<SceneManagerContextValue | null>(null);
 
 interface Props {
     defaultScene: string;

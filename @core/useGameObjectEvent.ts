@@ -13,6 +13,7 @@ export default function useGameObjectEvent<T extends PubSubEvent>(
     callbackRef.current = callback;
 
     useEffect(() => {
+        if (!callbackRef.current) return;
         return subscribe(eventName, callbackRef.current);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [subscribe, eventName, ...deps]);

@@ -15,7 +15,7 @@ export interface StoreContextValue {
     setState: (key: string | symbol, data: any) => void;
 }
 
-export const StoreContext = React.createContext<StoreContextValue>(null);
+export const StoreContext = React.createContext<StoreContextValue | null>(null);
 
 export default function useGameObjectStore<T = any>(
     key: string,
@@ -23,12 +23,13 @@ export default function useGameObjectStore<T = any>(
     read?: (storedData: T) => void
 ): T {
     const { name, forceUpdate } = useGameObject();
-    const { getState, setState } = useContext(StoreContext);
+    const contextValue = useContext(StoreContext);
+    const { getState, setState } = contextValue || {};
 
-    const writeCallback = useRef(null);
+    const writeCallback = useRef<any>(null);
     writeCallback.current = write;
 
-    const readCallback = useRef(null);
+    const readCallback = useRef<any>(null);
     readCallback.current = read;
 
     useGameEvent<SceneInitEvent>(
@@ -43,10 +44,12 @@ export default function useGameObjectStore<T = any>(
                 return;
             }
 
-            const stored = getState(`${name}.${key}`);
-            if (stored != null) {
-                readCallback.current(stored);
-                waitForMs(0).then(forceUpdate);
+            if (getState) {
+              const stored = getState(`${name}.${key}`);
+              if (stored != null) {
+                  readCallback.current(stored);
+                  waitForMs(0).then(forceUpdate);
+              }
             }
         },
         [key, name]
@@ -54,18 +57,21 @@ export default function useGameObjectStore<T = any>(
 
     const save = useCallback(async () => {
         if (!name) return;
+        if (!setState) return;
         setState(`${name}.${key}`, writeCallback.current());
     }, [key, name, setState]);
 
     useGameEvent<SceneExitEvent>('scene-exit', save, [save]);
     useGameEvent<SaveGameEvent>('save-game', save, [save]);
 
+    if (!getState) return {} as any;
     return getState(`${name}.${key}`);
 }
 
 export function useGameObjectStoreValue<T = any>(key: string): T {
     const { name } = useGameObject();
-    const { getState } = useContext(StoreContext);
+    const storeContext = useContext(StoreContext);
+    const { getState } = storeContext || {};
 
     if (!name) {
         // eslint-disable-next-line no-console

@@ -73,8 +73,10 @@ export default function ScenePortal({
             portedObj.transform.setY(transform.y);
 
             // update camera position
-            camera.position.setX(nodeRef.current.position.x);
-            camera.position.setY(nodeRef.current.position.y);
+            if (nodeRef.current) {
+              camera.position.setX(nodeRef.current.position.x);
+              camera.position.setY(nodeRef.current.position.y);
+            }
         },
         [name, transform]
     );

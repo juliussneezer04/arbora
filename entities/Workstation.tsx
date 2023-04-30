@@ -30,7 +30,7 @@ function WorkstationScript() {
 export default function Workstation(props: GameObjectProps) {
     return (
         <GameObject {...props}>
-            <Sprite {...spriteData.objects} state="plant-3" />
+            <Sprite {...spriteData.objects} state="workstation-1" />
             <Collider />
             <Interactable />
             <WorkstationScript />

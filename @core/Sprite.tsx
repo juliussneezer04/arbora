@@ -38,7 +38,7 @@ export default function Sprite({
     const [scale, setScale] = useState(initialScale);
     const nodeRef = useRef<THREE.Object3D>();
 
-    useComponentRegistry<SpriteRef>('Sprite', {
+    useComponentRegistry<SpriteRef | any>('Sprite', {
         setColor,
         setOpacity,
         setState,
@@ -51,7 +51,7 @@ export default function Sprite({
 
     return (
         <Graphic
-            ref={nodeRef}
+            ref={(nodeRef || undefined) as React.Ref<THREE.Object3D<THREE.Event>> | undefined}
             sheet={sheet}
             state={state}
             flipX={flipX}
