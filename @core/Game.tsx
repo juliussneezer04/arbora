@@ -138,7 +138,7 @@ export default function Game({
     };
 
     return (
-        <div className='relative select-none w-screen h-screen bg-green-700'>
+        <div className='relative select-none w-screen h-screen'>
             <Canvas
                 camera={{
                     position: [0, 0, 32],

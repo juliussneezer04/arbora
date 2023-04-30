@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Dispatch, Fragment, SetStateAction } from "react";
 import Collider from "../@core/Collider";
 import GameObject from "../@core/GameObject";
 import Interactable from "../@core/Interactable";
@@ -81,7 +81,12 @@ const resolveMapTile: TileMapResolver = (type, x, y) => {
   }
 };
 
-export default function OfficeScene() {
+interface OfficeSceneProps {
+  setOpenModal: Dispatch<SetStateAction<boolean>>; 
+  setMessage: (msg: string) => void;
+}
+
+export default function OfficeScene(props: OfficeSceneProps) {
   return (
     <>
       <GameObject name="map">
