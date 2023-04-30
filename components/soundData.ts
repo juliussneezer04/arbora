@@ -13,10 +13,6 @@ const soundData: { [index: string]: SoundProps } = {
     src: "/sfx/footstep.wav",
     volume: 0.75,
   },
-  background: {
-    src: "/sfx/bgmusic.mp3",
-    volume: 0.75,
-  },
 };
 
 export default soundData;
