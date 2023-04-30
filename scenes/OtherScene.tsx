@@ -40,7 +40,10 @@ const resolveMapTile: TileMapResolver = (type, x, y) => {
     }
 };
 
-export default function OtherScene() {
+export default function OtherScene(props: {
+    setOpenModal: (val: boolean) => void;
+    setMessage: (msg: string) => void;
+}) {
     return (
         <>
             <GameObject name="map">
@@ -52,7 +55,7 @@ export default function OtherScene() {
                 <Interactable />
                 <ScenePortal name="start" enterDirection={[1, 0]} target="office/exit" />
             </GameObject>
-            <Player x={0} y={2} />
+            <Player x={0} y={2} {...props} />
         </>
     );
 }

@@ -27,7 +27,11 @@ export default function App() {
       <div className="flex justify-center items-center w-screen h-screen">
         {openMessageModal && (
           <div className="absolute z-50 top-0 left-0 w-screen h-screen bg-black bg-opacity-50">
-            <DialogBox messages={messages} parentSetMessages={setMessages} parentSetOpen={setOpenMessageModal} />
+            <DialogBox
+              messages={messages}
+              parentSetMessages={setMessages}
+              parentSetOpen={setOpenMessageModal}
+            />
           </div>
         )}
         <Game cameraZoom={60}>
@@ -40,7 +44,10 @@ export default function App() {
                 />
               </Scene>
               <Scene id="other">
-                <OtherScene />
+                <OtherScene
+                  setOpenModal={setOpenMessageModal}
+                  setMessage={setMessage}
+                />
               </Scene>
             </SceneManager>
           </AssetLoader>
