@@ -17,7 +17,10 @@ easystar.enableSync();
 
 export default function findPath({ from, to, map }: PathOptions) {
     easystar.setGrid(map);
-    let result = [];
+    let result: {
+        x: number;
+        y: number;
+    }[] = [];
     try {
         easystar.findPath(from.x, from.y, to.x, to.y, path => {
             if (path != null) result = path.slice(1);

@@ -11,8 +11,8 @@ export type PreSaveGameEvent = PubSubEvent<'pre-save-game', void>;
 export type SaveGameEvent = PubSubEvent<'save-game', void>;
 
 export interface StoreContextValue {
-    getState: (key: string | symbol) => any;
-    setState: (key: string | symbol, data: any) => void;
+    getState: (key: string) => any;
+    setState: (key: string, data: any) => void;
 }
 
 export const StoreContext = React.createContext<StoreContextValue | null>(null);
@@ -76,9 +76,14 @@ export function useGameObjectStoreValue<T = any>(key: string): T {
     if (!name) {
         // eslint-disable-next-line no-console
         console.error('Attempting to use GameObject store without a name.');
-        return undefined;
+        return {} as any;
     }
 
+    if (!getState) {
+        // eslint-disable-next-line no-console
+        console.error('Attempting to use GameObject store without a state.');
+        return {} as any;
+    }
     const stored = getState(`${name}.${key}`);
     return stored;
 }
