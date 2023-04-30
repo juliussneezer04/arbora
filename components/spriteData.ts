@@ -42,7 +42,9 @@ const spriteData: { [index: string]: SpriteProps } = {
             'coffee-machine': [[2, 1]],
             'coffee-machine-empty': [[3, 1]],
             pizza: [[4, 1]],
-            plant: [[0, 2]],
+            'plant-1': [[0, 2]],
+            'plant-2': [[1, 2]],
+            'plant-3': [[2, 2]],
         },
     },
     footstep: {
